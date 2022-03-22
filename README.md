@@ -24,7 +24,7 @@ The game consists of two major components: audio weapon control and audio target
 The player is able to control the weapon projectile using real-time audio input through a microphone. The higher the amplitude of the sound made by the player, the larger the projectile velocity and the greater the haptics feedback intensity from the VR controller. Similarly, the higher the frequency of the sound made by the player, the smaller the projectile size and the greater the haptics intensity. Presence of local frequency maxima can initiate a change in colour of the projectile.
 
 ### Audio Target Generation
-The audio targets are generated based on real-time beat detection algorithm implemented on the music track. They are generated at random positions when a beat is detected but within a pre-defined sphere constraints. The size of the target is changing with the amplitude of music track. The colour of the target is changing with the dominating frequency band of the track. 
+The audio targets are generated based on real-time beat detection algorithm implemented on the music track. They are generated at random positions when a beat is detected but within a pre-defined sphere constraint. The size of the target is changing with the amplitude of music track. The colour of the target is changing with the dominating frequency band of the track. 
 
 ### Spatial Audio Effect
 Each audio cube is attached to a spatial sound effect. They each has a spawning sound effect and a destroy sound effect. 
