@@ -17,6 +17,9 @@ https://user-images.githubusercontent.com/53417086/159577907-92d8c4ff-b591-4317-
 ## Game Features Overview
 The game consists of two major components: audio weapon control and audio target generation. Both are controlled/generated based on **real-time continuous signal processing**. Player must shoot at the audio cubes to destroy them and increase points. Missed cubes (within 1.5m of the player) will destroy themselves and add up to number of missed. A detailed flow diagram of the game mechanism is shown below.
 
+![SystemDiagram](https://user-images.githubusercontent.com/53417086/159578853-41d1c046-01ff-4962-963f-0a73cdd8b531.svg)
+<p align = "center"><em>Figure 1: Game Flow System Diagram</em></p>
+
 ### Audio Weapon Control
 The player is able to control the weapon projectile using real-time audio input through a microphone. The higher the amplitude of the sound made by the player, the larger the projectile velocity and the greater the haptics feedback intensity from the VR controller. Similarly, the higher the frequency of the sound made by the player, the smaller the projectile size and the greater the haptics intensity. Presence of local frequency maxima can initiate a change in colour of the projectile.
 
