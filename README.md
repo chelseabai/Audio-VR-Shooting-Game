@@ -150,7 +150,6 @@ Beat Detection Theory Visualisation | Music Track in Time Domain
 > **Note:** Since the music track we chose is quite noisy, the beat detection algorithm can correctly pick up 80% of the beats only.
         
 ### Spatial Sound Effect
-Spatial Sound Effect:
 Audio targets are spawn in the VR space with sound effects attached to each of them. To achieve 3D spatial sound, we implemented the idea of reverberation curve. Reverberation refers to the decay of sound as it decreases to a certain loudness. We tuned both the reverberation curve and volume curve for the sound effect as a function of distance between the audio target and the player.
 
 ## Game Mechanism: Application of Audio Theories to the Game
@@ -159,7 +158,7 @@ The above-mentioned audio theories are integrated into the game mechanism in var
 https://user-images.githubusercontent.com/53417086/159628254-f38ccb79-a515-43a0-8175-f57bba0f0e52.mp4
 
 ### Weapon Projectile Shooting
-Weapon projectiles are scaled based on frequency and amplitude of the sound made. Audio signal data are accessed through a `public static` type in the Weapon script. Below is a quick demo of how is the sound signal data used:
+Weapon projectiles are scaled based on frequency and amplitude of the sound made. Audio signal data is accessed through a `public static` type in the Weapon script. Below is a quick demo of how the sound signal data has been used:
 
         _shootingForce = Mathf.Pow(AudioPeer._mainFreqAmp * 1000, 3f) / 10000 + 1; // multiply amplitude by 1000 so it's guaranteed to be above 1, cube for making louder things louder, divide by 10000 to bring it back to a usable number.
         base.shootingForce = _shootingForce;
@@ -170,7 +169,7 @@ Weapon projectiles are scaled based on frequency and amplitude of the sound made
         _aProjectileTrail.endWidth = 0; // trail taper off to nothing
         _aProjectileCollider.radius = projectileSize * 0.8f / 2; // hitbox radius
 
-`_mainFreqAmp` is accessed from the signal processing script `AudioPeer.cs`.
+`_mainFreqAmp` from `AudioPeer.cs` is accessed through the `Weapon.cs` script. The projectile property (e.g. shooting force) is then scaled with this number.
 
 ### Audio Target Generating
 Much of the work was done on my part to generate audio targets. Firstly, I implemented a distance range to limit the spawning point of the targets. The targets are generated within +/- 10m of both x and y direction, but are at least 4m away from the player. If the condition is not met, the distance will be scaled as shown below. 
@@ -188,7 +187,7 @@ Much of the work was done on my part to generate audio targets. Firstly, I imple
         beatTarget.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
         Instantiate(beatTarget, new Vector3 (x,y,z), Quaternion.identity);
 
-I later managed to add various sound components to the targets and also made the targets rotating while travelling towards the player at different speeds. I also implemented the destroy animation when the target is hit and tailored the final numbers into a scoring panel displaying over the VR camera view.
+I later managed to add various sound components to the targets and also made the targets rotating while travelling towards the player at different speeds, making the game more interesting to play with. I also implemented the destroy animation when the target is hit and tailored the final numbers into a scoring function which displays the number over the VR camera view.
 
 
 ## Build & Development
@@ -203,7 +202,7 @@ I later managed to add various sound components to the targets and also made the
 
 **Soundtrack**
 - Painted Skies (Melodic Prog Metal) from https://www.cambridge-mt.com/ms/mtk/
-> Note the music track we used is a multi-track with a total number of 17 individual tracks. Since we would like to work with specific frequencies: e.g. low frequency drum pattern for beat detection, multi-track alleviates the problem by providing tracks with the desirable frequency range easily.
+> **Note:** The music track we used is **a multi-track version** with a total number of 17 individual tracks. Since we would like to work with specific frequencies (e.g. low frequency drum pattern for beat detection), the analysis can be performed on the track with that specific instrument directly, improving accuracy.
 
 ### Development Process
 #### Stage 1: Ideation (W6)
@@ -218,20 +217,20 @@ With only 2 weeks left and zero background knowledge in Unity, this stage of the
 While we were breathing with Unity day and night during these two weeks, we managed to quickly iterate through the game prototypes and integrate various features into the game as we getting more experienced with Unity. With a week of development time, we successfully produced the final prototype the night before the installation day.
 
 ## Conclusion & Future Steps
-The overall installation was a **success** with great user engagement and satisfaction during the demo day. Moreover, users seem all like the game mechanism and actively interacted with the game by making interesting sounds. We were even **approached by tutors** who are interested to collaborate with us in applying VR to an industry setting. Other successes included:
+The overall installation was a **success** with great user engagement and satisfaction during the demo day. Moreover, users seemed all like the game mechanism and actively interacted with the game by making interesting sounds. We were even **approached by tutors** who are interested to collaborate with us in applying VR to an industry setting. Other successes included:
 - [x] Largely accurate audio signal capturing and processing during the demo;
 - [x] A playable game mechanism (audio targets) with reasonable success & failure rate among tested users;
 - [x] Audio weapon remains sensitive in picking up sounds from different people.
 
-Limitations of the current game include **a lack of game UI or panel** for users to easily start and pause the game. Moreover, we realised that most users **fail to recognise that audio targets are generated by beats**. Since the soundtrack we chose is really loud and fast-paced, it is likely to make users feel overwhelmed. The music track we used is also currently a mono track, making it different for us to add 3D spatial effect with the music. Additionally, the music track we are using now is in multi-track format (many different tracks for different instruments). However, only two of these tracks are being analysed.
+Limitations of the current game include **a lack of game UI or panel** for users to easily start and pause the game. Moreover, we realised that most users **fail to recognise that audio targets are generated by beats**. Since the soundtrack we chose is really loud and fast-paced, it is likely to make users feel overwhelmed. The music track we are using right now is also currently **mono**, making it difficult for us to add 3D spatial effect with the music. Additionally, although the music track we are using is in a multi-track format (different tracks for different instruments and was combined later), **only two of these tracks** are being analysed (beat detection: snare drum track; frequency/amplitude analysis: electric guitar track).
 
-Future steps are therefore developed based on existing plan and limitations:
+Future steps are therefore developed based on existing plan and limitations we identified:
 - [ ] Improve beat detector accuracy;
-- [ ] Add in game UIs such as selectin panel and menus;
+- [ ] Add in game UIs such as selection panels and menus;
 - [ ] Incorporate stereo music track into the game to create more intensive 3D audio effect;
 - [ ] Implement harmonics and fundamental frequencies to the audio weapon.
 - [ ] Explore the impact of resizing the width of frequency bins.
-- [ ] Implement functionality by incorporating more tracks;
+- [ ] Implement functionality by incorporating more tracks (i.e. different instruments can trigger different game mechanisms);
 
 
 
