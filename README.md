@@ -72,7 +72,11 @@ Both projectile velocity **(Part 1)** and the size of the generated audio cube *
 
 ### Frequency Analysis
 #### Frequency Band Analysis
-The colour of the audio cube is controlled by the dominating frequency band **(Part 1)**. 9 different frequency bands are created, and they correspond to 9 different colour choices. The decision to split the frequencies into 9 different bands is tricky. Firstly, a **cut-off frequency** of 8600Hz is applied, which equates to the frequency range of the electric guitar track analysed. It is further noted that there is a high concentration of low frequencies, giving the FFT graph a skewed shape. Therefore, a **high-pass filter** is applied to discount the higher amplitude of lower frequencies. Note that frequency range and weighting are not linear. They were adjusted and tuned based on the actual signal.
+The colour of the audio cube is controlled by the dominating frequency band **(Part 2)**. 9 different frequency bands are created, and they correspond to 9 different colour choices. The decision to split the frequencies into 9 different bands is tricky. Firstly, a **cut-off frequency** of 8600Hz is applied, which equates to the frequency range of the electric guitar track analysed. It is further noted that there is a high concentration of low frequencies, giving the FFT graph a skewed shape. Therefore, a **high-pass filter** is applied to discount the higher amplitude of lower frequencies. Note that frequency range and weighting are not linear. They were adjusted and tuned based on the actual signal.
+
+Frequency Spectrum of Music Track (bgm)| Audio Target Changing Color
+:-------------------------:|:-------------------------:
+<img width="1200" alt="frequency_analysis" src="https://user-images.githubusercontent.com/53417086/159619285-31ec686c-9215-4e43-a390-77666e17c8a4.png"> | ![changeColor](https://user-images.githubusercontent.com/53417086/159620756-60f2d373-1bdd-401d-894d-983cd2dd9869.gif)
 
 <em>Table 1: Frequency Bands</em>
 
@@ -104,7 +108,7 @@ During frequency analysis, we realised that sometimes there is a rapid change in
  
 Spectral Centroid Visualisation | Change in Lighting Intensity based on COM
 :-------------------------:|:-------------------------:
-![image](https://user-images.githubusercontent.com/53417086/159616498-3a4209f7-b301-4058-b1a5-a327c35a8397.png) |![lighting](https://user-images.githubusercontent.com/53417086/159616235-d6634250-3d3f-4556-883f-02017fe8a3d0.gif)
+<img width="1000" src="https://user-images.githubusercontent.com/53417086/159616498-3a4209f7-b301-4058-b1a5-a327c35a8397.png"> |![lighting](https://user-images.githubusercontent.com/53417086/159616235-d6634250-3d3f-4556-883f-02017fe8a3d0.gif)
 
 ### Beat Detection
 
