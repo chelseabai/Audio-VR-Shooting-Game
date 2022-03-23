@@ -17,8 +17,10 @@ https://user-images.githubusercontent.com/53417086/159577907-92d8c4ff-b591-4317-
 ## Game Features Overview
 The game consists of three major components: Audio weapon control, Audio target generation and Spatial Sound Effect. All of them are controlled/generated based on **real-time continuous signal processing**. Player must shoot at the audio targets to destroy them and increase points. Missed targets (within 1.5m of the player) will destroy themselves and add up to number of missed. A detailed flow diagram of the game mechanism is shown below.
 
-<img width="2564" alt="image" src="https://user-images.githubusercontent.com/53417086/159635456-601f9063-32ba-4327-8d4b-f6e89a029499.png">
-<p align = "center"><em>Figure 1: Game Flow System Diagram</em></p>
+Game Flow Diagram
+:-------------------------:
+<img width="2564" alt="image" src="https://user-images.githubusercontent.com/53417086/159635456-601f9063-32ba-4327-8d4b-f6e89a029499.png">|
+
 
 ### Part 1) Audio Weapon Control
 The player is able to control the weapon projectile using real-time audio input through a microphone. The higher the amplitude of the sound made by the player, the larger the projectile velocity and the greater the haptics feedback intensity from the VR controller. Similarly, the higher the pitch of the sound made by the player, the smaller the projectile size and the greater the haptics intensity. Presence of local frequency maxima can initiate a change in colour of the projectile.
@@ -171,7 +173,7 @@ Weapon projectiles are scaled based on frequency and amplitude of the sound made
 `_mainFreqAmp` is accessed from the signal processing script `AudioPeer.cs`.
 
 ### Audio Target Generating
-Much of the work was done on my part to generate audio targets. Firstly, I implemented a distance range to limit the spawning point of the targets. The targets are generated within +/- 10m of both x and y direction, but are at least 4m away from the player. If the condition is not met, the distance will be scaled as shown below.
+Much of the work was done on my part to generate audio targets. Firstly, I implemented a distance range to limit the spawning point of the targets. The targets are generated within +/- 10m of both x and y direction, but are at least 4m away from the player. If the condition is not met, the distance will be scaled as shown below. 
 
         float upperRange = 10.0f;
         float x = Random.Range(-upperRange, upperRange) + origin.transform.position.x;
@@ -186,7 +188,7 @@ Much of the work was done on my part to generate audio targets. Firstly, I imple
         beatTarget.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
         Instantiate(beatTarget, new Vector3 (x,y,z), Quaternion.identity);
 
-I later managed to add various sound components to the targets and also made the targets rotating while travelling towards the player. I also implemented the destroy animation when the target is hit.
+I later managed to add various sound components to the targets and also made the targets rotating while travelling towards the player at different speeds. I also implemented the destroy animation when the target is hit and tailored the final numbers into a scoring panel displaying over the VR camera view.
 
 
 ## Build & Development
