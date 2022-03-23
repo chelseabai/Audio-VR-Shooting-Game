@@ -157,8 +157,21 @@ The above-mentioned audio theories are integrated into the game mechanism in var
 https://user-images.githubusercontent.com/53417086/159628254-f38ccb79-a515-43a0-8175-f57bba0f0e52.mp4
 
 ### Weapon Projectile Shooting
-Weapon projectile shooting was primarily done by Jonathan Tang. I helped with the intial set up of XRInteractable object setup in VR setting
-### Audio Cube Generating
+Weapon projectiles are scaled based on frequency and amplitude of the sound made. Audio signal data are accessed through a `public static` type in the Weapon script. Below is a quick demo of how is the sound signal data used:
+
+        _shootingForce = Mathf.Pow(AudioPeer._mainFreqAmp * 1000, 3f) / 10000 + 1; // multiply amplitude by 1000 so it's guaranteed to be above 1, cube for making louder things louder, divide by 10000 to bring it back to a usable number.
+        base.shootingForce = _shootingForce;
+        projectileSize = 100000000 / Mathf.Pow(AudioPeer._mainFreq, 3f);
+        ParticleSystem.MainModule _projectileProperties = _aProjectile.main;
+        _projectileProperties.startSize = projectileSize; // set projectile size
+        _aProjectileTrail.startWidth = projectileSize;  // set trail width to match projectile size
+        _aProjectileTrail.endWidth = 0; // trail taper off to nothing
+        _aProjectileCollider.radius = projectileSize * 0.8f / 2; // hitbox radius
+
+`_mainFreqAmp` is accessed from the signal processing script `AudioPeer.cs`.
+
+### Audio Target Generating
+Much of the work was done on my part to generate audio targets. Firstly, I implemented a distance range to limit the spawning point of the targets. The targets are generated within +/- 10m of both x and y direction, but are at least 4m away from the player. If the condition is not met, the distance will be scaled as shown below.
 
         float upperRange = 10.0f;
         float x = Random.Range(-upperRange, upperRange) + origin.transform.position.x;
@@ -172,8 +185,8 @@ Weapon projectile shooting was primarily done by Jonathan Tang. I helped with th
         }
         beatTarget.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
         Instantiate(beatTarget, new Vector3 (x,y,z), Quaternion.identity);
-        
-### Audio Cube Destroy
+
+I later managed to add various sound components to the targets and also made the targets rotating while travelling towards the player. I also implemented the destroy animation when the target is hit.
 
 
 ## Build & Development
