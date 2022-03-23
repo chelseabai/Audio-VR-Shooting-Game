@@ -43,14 +43,14 @@ Notably, all the incoming audio signals from either the microphone **(Part 1)** 
            _audioSource.GetSpectrumData(_samples, 0, FFTWindow.Blackman);
         }
      
-Incoming audio signals are sampled at the rate of 44100 Hz using Unity. 512 frequency bins are created. However, based on Nyquist Theorem, frequencies above Nyquist frequency (22050 Hz – 44100 Hz) are discarded as they are mirroring the first half of the range (0 Hz – 22050 Hz) due to aliasing effect. As such the resulting frequency split is 22050/512 = 43 Hz. Frequencies can be accessed using index of the data array such as _samples[2] = 86 – 129Hz. Blackman window is used to handle spectral leakage, producing more defined frequency responses. We created 512 scalable cube objects in Unity to visualise this result in real time.
+Incoming audio signals are sampled at the rate of 44100 Hz using Unity. 512 frequency bins are created. However, based on **Nyquist Theorem**, frequencies above Nyquist frequency (22050 Hz – 44100 Hz) are discarded as they are mirroring the first half of the range (0 Hz – 22050 Hz) due to aliasing effect. As such the resulting frequency split is 22050/512 = 43 Hz. Frequencies can be accessed using index of the data array such as _samples[2] = 86 – 129Hz. Blackman window is used to handle spectral leakage, producing more defined frequency responses. We created 512 scalable cube objects in Unity to visualise this result in real time.
 
 FFT at Timestamp A             |  FFT at Timestamp B
 :-------------------------:|:-------------------------:
 ![](https://user-images.githubusercontent.com/53417086/159595350-4aa00e42-f6a2-49fd-8da2-5a0fbafabcf4.png)  |  ![](https://user-images.githubusercontent.com/53417086/159595516-44ea83db-b703-4540-843a-f6daef30b2c5.png)
 
 ### A-weighting
-Since human perceives sounds differently, we applied an A-weighting algorithm in **Part 1** to the incoming microphone signal. This helps to adjust the incoming signal to the relative loudness perceived by our ear, so that the velocity of the projectile will match with perceived loudness better.
+Since human perceives sounds differently, we applied an A-weighting algorithm in **Part 1** to the incoming microphone signal. This helps to adjust the incoming signal to the **relative loudness perceived by our ear**, so that the velocity of the projectile will match with perceived loudness better.
    
         void ApplyAWeighting(_sampleFreq, _sampleAmp) {
           float _sampleWeighting = (Mathf.Pow(12194, 2f) * Mathf.Pow(_sampleFreq, 4f)) / (((Mathf.Pow(_sampleFreq, 2f) + (Mathf.Pow(20.6f, 2f)))) * (Mathf.Sqrt((Mathf.Pow(_sampleFreq, 2f) + Mathf.Pow(107.7f, 2f)) * (Mathf.Pow(_sampleFreq, 2f) + Mathf.Pow(737.9f, 2f)))) * (Mathf.Pow(_sampleFreq, 2f) + Mathf.Pow(12194f, 2f)));
@@ -59,7 +59,7 @@ Since human perceives sounds differently, we applied an A-weighting algorithm in
         }
         
 ### Amplitude Analysis
-Both projectile velocity **(Part 1)** and the size of the generated audio target **(Part 2)** are controlled by amplitude input. Real-time total amplitude `totalAmplitude` is obtained by adding up amplitudes of each frequency bin using a “for loop”. Since the obtained amplitude is a relative value, we created a variable called `highestAmplitude` to keep track of the highest amplitude recorded so far. We then used their ratio to control the game features instead. This prevents over scaling of the feature value by sounds which are too loud or too quiet.
+Both projectile velocity **(Part 1)** and the size of the generated audio target **(Part 2)** are controlled by amplitude input. Real-time total amplitude `totalAmplitude` is obtained by adding up amplitudes of each frequency bin using a “for loop”. Since the obtained amplitude is a **relative value**, we created a variable called `highestAmplitude` to keep track of the highest amplitude recorded so far. We then used their **ratio** to control the game features instead. This prevents over scaling of the feature value by sounds which are too loud or too quiet.
 
         for (int i=0; i < _samples.Length; i++){
             totalAmplitude += _samples[i];
@@ -111,7 +111,7 @@ Spectral Centroid Visualisation | Change in Lighting Intensity based on COM
 <img width="1000" src="https://user-images.githubusercontent.com/53417086/159616498-3a4209f7-b301-4058-b1a5-a327c35a8397.png"> |![lighting](https://user-images.githubusercontent.com/53417086/159616235-d6634250-3d3f-4556-883f-02017fe8a3d0.gif)
 
 ### Beat Detection
-Beat detection algorithm is applied to the music track, and the audio targets are generated every time when a beat is detected. The core idea behind this algorithm is the change in sound energy. The average energy of a couple of seconds of the sound before the current playback is calculated. This value is then compared to the current energy of the sound. If the threshold is passed, then a beat is detected. The algorithm is applied to the snare drum soundtrack, which sets its frequency range to roughly from 300 Hz – 1000 Hz. To achieve this idea, we implemented a history buffer to store the previous energies with a size of 43. The buffer is kept updated and new average energies are added to it. The threshold is also adjusted based on variance. This is because noisy music like hard rock will make the beat detection doggy and we need to decrease threshold for higher variance values. Mathematical reference of this application can be found <a href="https://www.parallelcube.com/2018/03/30/beat-detection-algorithm/">here</a>.
+Beat detection algorithm is applied to the music track, and the audio targets are generated every time when a beat is detected. The core idea behind this algorithm is the change in **sound energy**. The average energy of a couple of seconds of the sound before the current playback is calculated. This value is then compared to the current energy of the sound. If the **threshold** is passed, then a beat is detected. The algorithm is applied to the snare drum soundtrack, which sets its frequency range to roughly from 300 Hz – 1000 Hz. To achieve this idea, we implemented a **history buffer** to store the previous energies with a size of 43. The buffer is kept updated and new average energies are added to it. The threshold is also adjusted based on variance. This is because noisy music like hard rock will make the beat detection doggy and we need to decrease threshold for higher variance values. Mathematical reference of this application can be found <a href="https://www.parallelcube.com/2018/03/30/beat-detection-algorithm/">here</a>.
 
         void detectBeat(){
                 Variance = VarianceAdder(historyBuffer) / historyBuffer.Length;  
