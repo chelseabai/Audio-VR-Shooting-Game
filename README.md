@@ -113,6 +113,10 @@ Spectral Centroid Visualisation | Change in Lighting Intensity based on COM
 ### Beat Detection
 Beat detection algorithm is applied to the music track, and the audio targets are generated every time when a beat is detected. The core idea behind this algorithm is the change in **sound energy**. The average energy of a couple of seconds of the sound before the current playback is calculated. This value is then compared to the current energy of the sound. If the **threshold** is passed, then a beat is detected. The algorithm is applied to the snare drum soundtrack, which sets its frequency range to roughly from 300 Hz – 1000 Hz. To achieve this idea, we implemented a **history buffer** to store the previous energies with a size of 43. The buffer is kept updated and new average energies are added to it. The threshold is also adjusted based on variance. This is because noisy music like hard rock will make the beat detection doggy and we need to decrease threshold for higher variance values. Mathematical reference of this application can be found <a href="https://www.parallelcube.com/2018/03/30/beat-detection-algorithm/">here</a>.
 
+Beat Detection Theory Visualisation | Music Track in Time Domain
+:-------------------------:|:-------------------------:
+<img width="500" src="https://user-images.githubusercontent.com/53417086/159624622-e5369e6a-bb89-494c-87c6-8bab52bcc588.gif">| <img width="500" alt="beats" src="https://user-images.githubusercontent.com/53417086/159625329-61e7793d-438e-405f-a0bb-c3652503c9d9.png">
+
         void detectBeat(){
                 Variance = VarianceAdder(historyBuffer) / historyBuffer.Length;  
                 Constant = (float)((-0.0025714 * Variance) + 1.5142857);
