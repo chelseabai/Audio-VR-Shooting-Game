@@ -101,6 +101,10 @@ During frequency analysis, we realised that sometimes there is a rapid change in
                 }
             }       
         }
+ 
+Spectral Centroid Visualisation | Change in Lighting Intensity based on COM
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/53417086/159616498-3a4209f7-b301-4058-b1a5-a327c35a8397.png) |![lighting](https://user-images.githubusercontent.com/53417086/159616235-d6634250-3d3f-4556-883f-02017fe8a3d0.gif)
 
 ### Beat Detection
 
