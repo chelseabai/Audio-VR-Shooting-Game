@@ -36,12 +36,31 @@ Each audio cube is attached to a spatial sound effect. They each has a spawning 
 ## Audio Theories Behind the Game
 
 ### Real-time Signal Processing
+Notably, all the incoming audio signals from either the microphone **(Part 1)** or the music track **(Part 2)** are processed in real-time continuously using Fast Fourier Transform (FFT). FFT converts the amplitude over time domain into the frequency domain, returning relative amplitude at each frequency bin. This is handled by Unity’s inbuilt function `GetSpectrumData()`. 
+
+        public static float[] _samples = new float[512];
+        void GetSpectrumAudioSource(){
+           _audioSource.GetSpectrumData(_samples, 0, FFTWindow.Blackman);
+        }<img width="631" alt="512frequency_cubes1" src="https://user-images.githubusercontent.com/53417086/159595478-7a2e9318-96a9-46cf-8649-e74db41646f8.png">
+
+     
+Incoming audio signals are sampled at the rate of 44100 Hz using Unity. 512 frequency bins are created. However, based on Nyquist Theorem, frequencies above Nyquist frequency (22050 Hz – 44100 Hz) are discarded as they are mirroring the first half of the range (0 Hz – 22050 Hz) due to aliasing effect. As such the resulting frequency split is 22050/512 = 43 Hz. Frequencies can be accessed using index of the data array such as _samples[2] = 86 – 129Hz. Blackman window is used to handle spectral leakage, producing more defined frequency responses. We created 512 scalable cube objects in Unity to visualise this result in real time.
+FFT at Timestamp A             |  FFT at Timestamp B
+:-------------------------:|:-------------------------:
+![](https://user-images.githubusercontent.com/53417086/159595350-4aa00e42-f6a2-49fd-8da2-5a0fbafabcf4.png)  |  ![](https://user-images.githubusercontent.com/53417086/159595516-44ea83db-b703-4540-843a-f6daef30b2c5.png)
+
 ### Amplitude Analysis
 ### Frequency Analysis
 #### Frequency Band Analysis
 #### Spectral Centroid Analysis
 ### Beat Detection
 ### A-weighting
+Since human perceives sounds differently, we applied an A-weighting algorithm in **Part 1** to the incoming microphone signal. This 
+        void ApplyAWeighting(_sampleFreq, _sampleAmp) {
+          float _sampleWeighting = (Mathf.Pow(12194, 2f) * Mathf.Pow(_sampleFreq, 4f)) / (((Mathf.Pow(_sampleFreq, 2f) + (Mathf.Pow(20.6f, 2f)))) * (Mathf.Sqrt((Mathf.Pow(_sampleFreq, 2f) + Mathf.Pow(107.7f, 2f)) * (Mathf.Pow(_sampleFreq, 2f) + Mathf.Pow(737.9f, 2f)))) * (Mathf.Pow(_sampleFreq, 2f) + Mathf.Pow(12194f, 2f)));
+          _samplesWeighted = _sampleWeighting * _sampleAmp;
+          return _samplesWeighted;
+        }
 ### Spatial Sound Effect
 
 ## Build & Development
