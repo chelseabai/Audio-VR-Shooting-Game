@@ -202,6 +202,11 @@ With only 2 weeks left and zero background knowledge in Unity, this stage of the
 While we were breathing with Unity day and night during these two weeks, we managed to quickly iterate through the game prototypes and integrate various features into the game as we getting more experienced with Unity. With a week of development time, we successfully produced the final prototype the night before the installation day.
 
 ## Conclusion & Future Steps
+The overall installation was a success with great user engagement and satisfaction during the demo day. Moreover, users seem all like the game mechanism and actively interacted with the game by making interesting sounds. We were even approached by tutors who are interested to collaborate with us in applying VR to an industry setting. Other successes included:
+- [x] Accurate audio signal capturing and processing during the demo;
+- [x] A playable game mechanism (audio targets) with reasonable success & failure rate;
+- [x] Audio weapon remains sensitive in picking up sounds from different people.
+Limitations 
 
 
 
