@@ -17,7 +17,7 @@ https://user-images.githubusercontent.com/53417086/159577907-92d8c4ff-b591-4317-
 ## Game Features Overview
 The game consists of three major components: Audio weapon control, Audio target generation and Spatial Sound Effect. All of them are controlled/generated based on **real-time continuous signal processing**. Player must shoot at the audio targets to destroy them and increase points. Missed targets (within 1.5m of the player) will destroy themselves and add up to number of missed. A detailed flow diagram of the game mechanism is shown below.
 
-![SystemDiagram](https://user-images.githubusercontent.com/53417086/159578853-41d1c046-01ff-4962-963f-0a73cdd8b531.svg)
+<img width="2564" alt="image" src="https://user-images.githubusercontent.com/53417086/159635456-601f9063-32ba-4327-8d4b-f6e89a029499.png">
 <p align = "center"><em>Figure 1: Game Flow System Diagram</em></p>
 
 ### Part 1) Audio Weapon Control
@@ -59,7 +59,7 @@ Since human perceives sounds differently, we applied an A-weighting algorithm in
         }
         
 ### Amplitude Analysis
-Both projectile velocity **(Part 1)** and the size of the generated audio target **(Part 2)** are controlled by amplitude input. Real-time total amplitude `totalAmplitude` is obtained by adding up amplitudes of each frequency bin using a “for loop”. Since the obtained amplitude is a **relative value**, we created a variable called `highestAmplitude` to keep track of the highest amplitude recorded so far. We then used their **ratio** to control the game features instead. This prevents over scaling of the feature value by sounds which are too loud or too quiet.
+Both projectile velocity **(Part 1)** and the size of the generated audio target **(Part 2)** are controlled by amplitude input. Real-time total amplitude `totalAmplitude` is obtained by adding up amplitudes of each frequency bin using a “for loop”. Since the obtained amplitude is a **relative value**, we created a variable called `highestAmplitude` to keep track of the highest amplitude recorded so far. We then used their **ratio** to control the game features instead. For audio targets, their scale refers to `scaleFactor = amplitudeRatio*1.5 + 0.75`. This prevents over scaling of the feature value by sounds which are too loud or too quiet. 
 
         for (int i=0; i < _samples.Length; i++){
             totalAmplitude += _samples[i];
@@ -93,7 +93,7 @@ Band Number | Index Range (i)            |Frequency Range            | Weighting
 8|125 - 200 | 5375Hz - 8600Hz | 1-0.005*i | white
 
 #### Spectral Centroid Analysis
-During frequency analysis, we realised that sometimes there is a rapid change in notes (e.g.  pull off technique) in the electric guitar track. This indicates a **shift in the overall frequency**. To capture this “shift”, spectral centroid is used to identify the **centre of mass** of the spectrum, which perceptually connects with the impression of brightness of a sound. To get this centre of mass, a “for loop” is implemented which returns the frequency bin that split the total amplitude into two halves (left total frequency = right total frequency). We then applied this value to change the lighting effect of the room **(Part 2)**. A higher COM results in greater lighting intensity.
+During frequency analysis, we realised that sometimes there is a rapid change in notes (e.g.  pull off technique) in the electric guitar track. This indicates a **shift in the overall frequency**. To capture this “shift”, spectral centroid is used to identify the **centre of mass** of the spectrum, which perceptually connects with the impression of brightness of a sound. To get this centre of mass, a “for loop” is implemented which returns the frequency bin that split the total amplitude into two halves (left total frequency = right total frequency). We then applied this value to change the lighting effect of the room **(Part 2)**. A higher COM results in greater lighting intensity: `Intensity = min(COM Index/25, 2)`;
 
         void GetCOM(){
             float currentMass = 0;
@@ -111,7 +111,7 @@ Spectral Centroid Visualisation | Change in Lighting Intensity based on COM
 <img width="1000" src="https://user-images.githubusercontent.com/53417086/159616498-3a4209f7-b301-4058-b1a5-a327c35a8397.png"> |![lighting](https://user-images.githubusercontent.com/53417086/159616235-d6634250-3d3f-4556-883f-02017fe8a3d0.gif)
 
 ### Beat Detection
-Beat detection algorithm is applied to the music track, and the audio targets are generated every time when a beat is detected. The core idea behind this algorithm is the change in **sound energy**. The average energy of a couple of seconds of the sound before the current playback is calculated. This value is then compared to the current energy of the sound. If the **threshold** is passed, then a beat is detected. The algorithm is applied to the snare drum soundtrack, which sets its frequency range to roughly from 300 Hz – 1000 Hz. To achieve this idea, we implemented a **history buffer** to store the previous energies with a size of 43. The buffer is kept updated and new average energies are added to it. The threshold is also adjusted based on variance. This is because noisy music like hard rock will make the beat detection doggy and we need to decrease threshold for higher variance values. Mathematical reference of this application can be found <a href="https://www.parallelcube.com/2018/03/30/beat-detection-algorithm/">here</a>.
+Beat detection algorithm is applied to the music track, and the audio targets are generated every time when a beat is detected **(Part 2)**. The core idea behind this algorithm is the change in **sound energy**. The average energy of a couple of seconds of the sound before the current playback is calculated. This value is then compared to the current energy of the sound. If the **threshold** is passed, then a beat is detected. The algorithm is applied to the snare drum soundtrack, which sets its frequency range to roughly from 300 Hz – 1000 Hz. To achieve this idea, we implemented a **history buffer** to store the previous energies with a size of 43. The buffer is kept updated and new average energies are added to it. The threshold is also adjusted based on variance. This is because noisy music like hard rock will make the beat detection doggy and we need to decrease threshold for higher variance values. Mathematical reference of this application can be found <a href="https://www.parallelcube.com/2018/03/30/beat-detection-algorithm/">here</a>.
 
 Beat Detection Theory Visualisation | Music Track in Time Domain
 :-------------------------:|:-------------------------:
@@ -148,11 +148,61 @@ Beat Detection Theory Visualisation | Music Track in Time Domain
 > **Note:** Since the music track we chose is quite noisy, the beat detection algorithm can correctly pick up 80% of the beats only.
         
 ### Spatial Sound Effect
+Spatial Sound Effect:
+Audio targets are spawn in the VR space with sound effects attached to each of them. To achieve 3D spatial sound, we implemented the idea of reverberation curve. Reverberation refers to the decay of sound as it decreases to a certain loudness. We tuned both the reverberation curve and volume curve for the sound effect as a function of distance between the audio target and the player.
+
+## Game Mechanism: Application of Audio Theories to the Game
+The above-mentioned audio theories are integrated into the game mechanism in various ways. Below is a full demo of the game from the player’s perspective (VR camera).
+
+https://user-images.githubusercontent.com/53417086/159628254-f38ccb79-a515-43a0-8175-f57bba0f0e52.mp4
+
+### Weapon Projectile Shooting
+Weapon projectile shooting was primarily done by Jonathan Tang. I helped with the intial set up of XRInteractable object setup in VR setting
+### Audio Cube Generating
+
+        float upperRange = 10.0f;
+        float x = Random.Range(-upperRange, upperRange) + origin.transform.position.x;
+        float y = Random.Range(1.5f, 5.0f) + origin.transform.position.y;
+        float z = Random.Range(-upperRange, upperRange) + origin.transform.position.z;
+        float distance = (x-origin.transform.position.x)*(x-origin.transform.position.x) + (z-origin.transform.position.z)*(z-origin.transform.position.z);
+        distance = Mathf.Pow(distance,0.5f);
+        if (distance < 4.0f){
+            x = 4.0f/distance * x;
+            z = 4.0f/distance * z;
+        }
+        beatTarget.transform.localScale = new Vector3(0.25f,0.25f,0.25f);
+        Instantiate(beatTarget, new Vector3 (x,y,z), Quaternion.identity);
+        
+### Audio Cube Destroy
+
 
 ## Build & Development
 ### Setup & Platforms
-### Development Process
+**Hardware:** 
+- Oculus Quest 2 VR headset & controllers
+- Sony Headphone
+- AntLion ModMic
 
-## Interesting Game Mechanisms
+**Software**
+- Unity
+
+**Soundtrack**
+- Painted Skies (Melodic Prog Metal) from https://www.cambridge-mt.com/ms/mtk/
+
+### Development Process
+#### Stage 1: Ideation (W6)
+The original concept of the game came from Jonathan Tang. The basic idea is to create a shooting game but with sound control. Player can make interesting sounds such as "Biu" or "Oiii" to activate different weapons and projectiles depending on their sound loudness, pitch and duration.
+#### Stage 2: Research (W7-8)
+We researched different methods to process the sounds in real life, including trying out Python and MaxMSP. The initial plan was to use MaxMSP to analyse the signals outside Unity and use Open Sound Control to import audio data back into Unity to activate game functions. We eventually figured out that it is possible to conduct FFT and sound signal analysis in Unity and we decided to build our entire game, including the audio component, into a holistic Unity package.
+#### Stage 3: Finalise Concept (W9)
+The finalised concept of the game is similar to the current prototype. We split the main goal into 3 different parts as mentioned previously.  The biggest obstacle we faced is the lack of game development experience. We also researched into similar games to get inspiration.
+#### Stage 4: Unity Exploration (W10-W11)
+With only 2 weeks left and zero background knowledge in Unity, this stage of the development largely involves Unity Exploration and online tutorial “Speed run”. We extensively watched lots of Unity VR game development videos and managed to successfully setup a basic shooting game structure (with many struggles). We then proceeded to study audio and signal processing in Unity. Special Thanks to <a href="https://www.youtube.com/channel/UCBkub2TsbCFIfdhuxRr2Lrw">Peer Play</a> and his excellent video resources in Unity Audio Processing.
+#### Stage 5: Game Development (W10-W11)
+While we were breathing with Unity day and night during these two weeks, we managed to quickly iterate through the game prototypes and integrate various features into the game as we getting more experienced with Unity. With a week of development time, we successfully produced the final prototype the night before the installation day.
+
+## Conclusion & Future Steps
+
+
 
 
